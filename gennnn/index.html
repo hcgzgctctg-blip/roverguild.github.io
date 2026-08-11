@@ -1,46 +1,309 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Domain Generator</title>
+
 <style>
-*{box-sizing:border-box}html,body{margin:0;min-height:100%}
-body{background:#0f0f10;color:#fff;font-family:Arial,Helvetica,sans-serif;display:flex;justify-content:center;padding:48px 20px}
-.container{width:min(100%,900px);background:#171719;border-radius:22px;padding:34px;box-shadow:0 12px 40px rgba(0,0,0,.35)}
-h1{margin:0 0 10px;font-size:32px;text-align:center}.hint{text-align:center;color:#aaa;margin:0 0 28px}
-.row{display:flex;gap:12px}input{flex:1;min-width:0;padding:15px 17px;border:1px solid #3a3a3f;border-radius:12px;background:#0d0d0f;color:#fff;outline:none;font-size:16px}
-button{border:0;border-radius:12px;padding:15px 24px;background:#fff;color:#111;font-weight:700;cursor:pointer;font-size:16px}
-.note{margin:14px 0 24px;color:#aaa;font-size:14px}.result{display:none;border-radius:18px;overflow:hidden;border:1px solid #303035;background:#0b0b0d}
-.resultbar{padding:14px 16px;border-bottom:1px solid #303035}.resultbar a{color:#fff;word-break:break-all}
-iframe{display:block;width:100%;height:520px;border:0;background:#fff}.error{color:#ff8f8f;display:none;margin-top:12px}
-@media(max-width:650px){.row{flex-direction:column}iframe{height:420px}.container{padding:24px}}
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #0b0d10;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 25px;
+}
+
+.card {
+  width: 100%;
+  max-width: 520px;
+  background: #171a1f;
+  border: 1px solid #30343b;
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+
+.logo {
+  width: 58px;
+  height: 58px;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 20px;
+  margin: 0 auto 20px;
+}
+
+h1 {
+  text-align: center;
+  margin: 0 0 10px;
+  font-size: 28px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #a8adb7;
+  margin-bottom: 25px;
+}
+
+input {
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #3a3f48;
+  background: #0f1115;
+  color: white;
+  font-size: 15px;
+  outline: none;
+}
+
+button {
+  width: 100%;
+  margin-top: 14px;
+  padding: 15px;
+  border: 0;
+  border-radius: 10px;
+  background: white;
+  color: #111;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: .9;
+}
+
+.secondary {
+  background: #292e36;
+  color: white;
+}
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+.auth-box {
+  text-align: center;
+}
+
+.auth-title {
+  font-size: 23px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.auth-text {
+  color: #a8adb7;
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+.url-box {
+  background: #0d0f13;
+  border: 1px solid #30343b;
+  border-radius: 10px;
+  padding: 14px;
+  word-break: break-all;
+  text-align: left;
+  color: #ddd;
+  margin: 18px 0;
+}
+
+.success {
+  text-align: center;
+}
+
+.success-icon {
+  font-size: 45px;
+  margin-bottom: 15px;
+}
+
+.small {
+  color: #8f96a3;
+  font-size: 13px;
+  margin-top: 18px;
+  text-align: center;
+}
 </style>
 </head>
+
 <body>
-<main class="container">
-<h1>Domain Generator</h1>
-<p class="hint">Enter a URL to preview it in the panel below.</p>
-<div class="row">
-<input id="url" type="url" placeholder="https://example.github.io/" autocomplete="off">
-<button id="continue">Continue</button>
+
+<div class="card">
+
+  <!-- SCREEN 1 -->
+  <div id="generator" class="screen active">
+    <div class="logo">R</div>
+
+    <h1>Domain Generator</h1>
+
+    <p class="subtitle">
+      Enter a URL to continue.
+    </p>
+
+    <input
+      id="urlInput"
+      type="url"
+      placeholder="https://example.com"
+      autocomplete="off"
+    >
+
+    <button onclick="continueToAuthorization()">
+      Continue
+    </button>
+
+    <p class="small">
+      Enter a website URL you want to use.
+    </p>
+  </div>
+
+
+  <!-- SCREEN 2 -->
+  <div id="authorization" class="screen">
+
+    <div class="logo">R</div>
+
+    <div class="auth-box">
+
+      <div class="auth-title">
+        Authorization
+      </div>
+
+      <div class="auth-text">
+        You are about to continue to the selected website.
+      </div>
+
+      <div class="url-box" id="authUrl"></div>
+
+      <button onclick="authorize()">
+        Authorize
+      </button>
+
+      <button class="secondary" onclick="goBack()">
+        Back
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- SCREEN 3 -->
+  <div id="result" class="screen">
+
+    <div class="success">
+
+      <div class="success-icon">✓</div>
+
+      <h1>Authorized</h1>
+
+      <p class="subtitle">
+        The URL you selected is:
+      </p>
+
+      <div class="url-box" id="finalUrl"></div>
+
+      <button onclick="openUrl()">
+        Open URL
+      </button>
+
+      <button class="secondary" onclick="startAgain()">
+        Start Again
+      </button>
+
+    </div>
+
+  </div>
+
 </div>
-<p class="note">Only use domains you own or have permission to embed. Some sites block iframes.</p>
-<p id="error" class="error"></p>
-<section id="result" class="result">
-<div class="resultbar"><a id="shownUrl" target="_blank" rel="noopener noreferrer"></a></div>
-<iframe id="preview" title="URL preview" referrerpolicy="no-referrer"></iframe>
-</section>
-</main>
+
+
 <script>
-const input=document.getElementById('url'),button=document.getElementById('continue'),result=document.getElementById('result'),preview=document.getElementById('preview'),shownUrl=document.getElementById('shownUrl'),error=document.getElementById('error');
-button.addEventListener('click',()=>{
- error.style.display='none';
- const value=input.value.trim(); let url;
- try{url=new URL(value);if(!/^https?:$/.test(url.protocol))throw new Error()}catch(e){error.textContent='Please enter a valid http:// or https:// URL.';error.style.display='block';return}
- const generated=new URL(window.location.href); generated.searchParams.set('url',url.href);
- shownUrl.href=generated.href; shownUrl.textContent=generated.href; preview.src=url.href; result.style.display='block';
-});
+let selectedUrl = "";
+
+function continueToAuthorization() {
+
+  const input = document.getElementById("urlInput");
+  const value = input.value.trim();
+
+  if (!value) {
+    alert("Please enter a URL.");
+    return;
+  }
+
+  try {
+    const url = new URL(value);
+
+    if (url.protocol !== "http:" && url.protocol !== "https:") {
+      throw new Error();
+    }
+
+    selectedUrl = url.href;
+
+  } catch {
+    alert("Please enter a valid http:// or https:// URL.");
+    return;
+  }
+
+  document.getElementById("authUrl").textContent = selectedUrl;
+
+  document.getElementById("generator").classList.remove("active");
+  document.getElementById("authorization").classList.add("active");
+}
+
+
+function authorize() {
+
+  document.getElementById("finalUrl").textContent = selectedUrl;
+
+  document.getElementById("authorization").classList.remove("active");
+  document.getElementById("result").classList.add("active");
+}
+
+
+function goBack() {
+
+  document.getElementById("authorization").classList.remove("active");
+  document.getElementById("generator").classList.add("active");
+}
+
+
+function startAgain() {
+
+  selectedUrl = "";
+
+  document.getElementById("urlInput").value = "";
+
+  document.getElementById("result").classList.remove("active");
+  document.getElementById("generator").classList.add("active");
+}
+
+
+function openUrl() {
+
+  if (selectedUrl) {
+    window.open(selectedUrl, "_blank", "noopener,noreferrer");
+  }
+
+}
 </script>
+
 </body>
 </html>
